@@ -806,46 +806,6 @@ select.list-dt:focus {
                 </div>
             </div>
 
-            <div class="modal fade" id="myConfig" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title text-center" id="myModalLabel">
-                                Hola: <b id="welcomeName"></b> <br>
-                                <small>¡Gracias por confirmar!</small> <br>
-
-                                <small>Tú número de invitados es: <b>3</b></small>
-                            </h3>
-                        </div>
-
-                        <div class="modal-body text-center">
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="inputHelpBlock">Elección para el asistente</label>
-
-                                    <div class="col-sm-12">
-                                        @foreach($menu as $detail)
-                                            <label class="radio-inline">
-                                                <input type="radio" name="inlineOptions" id="menu{{ $detail->id }}" value="{{ $detail->id }}"> {{ $detail->tipo }}
-                                            </label>
-                                        @endforeach
-
-                                        <label class="radio-inline">
-                                            <input type="radio" name="inlineOptions" id="menu3" value="option3"> NO ASISTIRÁ
-                                        </label>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="modal-footer text-center">
-                            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelAsistent">Cancelar</button>
-                            <button type="button" class="btn btn-primary">Guardar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <footer id="fh5co-footer" role="contentinfo">
                 <div class="container">
 
@@ -875,36 +835,41 @@ select.list-dt:focus {
         </div>
         
         <!-- jQuery -->
-        <script src="js/jquery.min.js"></script>
+        <script src="{{ asset('js/jquery.min.js') }}"></script>
         <!-- jQuery Easing -->
-        <script src="js/jquery.easing.1.3.js"></script>
+        <script src="{{ asset('js/jquery.easing.1.3.js') }}"></script>
         <!-- Bootstrap -->
-        <script src="js/bootstrap.min.js"></script>
+        <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         <!-- Waypoints -->
-        <script src="js/jquery.waypoints.min.js"></script>
+        <script src="{{ asset('js/jquery.waypoints.min.js') }}"></script>
         <!-- Carousel -->
-        <script src="js/owl.carousel.min.js"></script>
+        <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
         <!-- countTo -->
-        <script src="js/jquery.countTo.js"></script>
+        <script src="{{ asset('js/jquery.countTo.js') }}"></script>
 
         <!-- Stellar -->
-        <script src="js/jquery.stellar.min.js"></script>
+        <script src="{{ asset('js/jquery.stellar.min.js') }}"></script>
         <!-- Magnific Popup -->
-        <script src="js/jquery.magnific-popup.min.js"></script>
-        <script src="js/magnific-popup-options.js"></script>
+        <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
+        <script src="{{ asset('js/magnific-popup-options.js') }}"></script>
 
         <!-- // <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.min.js"></script> -->
-        <script src="js/simplyCountdown.js"></script>
+        <script src="{{ asset('js/simplyCountdown.js') }}"></script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/easy-autocomplete/1.3.5/jquery.easy-autocomplete.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Main -->
-        <script src="js/main.js"></script>
+        <script src="{{ asset('js/main.js') }}"></script>
+        
+        <script src="{{ asset('js/inputmask/jquery.inputmask.js') }}"></script>
+        <script src="{{ asset('js/modal.js') }}"></script>
 
         <script>
+            window.CSRF_TOKEN = '{{ csrf_token() }}';
+
             $("#autocomplete-search").easyAutocomplete({
                 url: function(search) {
-                    return "{{ route('searchForGuests') }}?search=" + search;
+                return "{{ route('searchForGuests') }}?search=" + search;
                 },
                 getValue: "titular_invitacion",
                 list: {
@@ -929,56 +894,36 @@ select.list-dt:focus {
                                 popup: 'animate__animated animate__fadeOutUp'
                             },
                             html: `
-                                <div class="col-xs-12" id="test">
-                                    <h2><b>${ asistent }</b></h2>
-                                    <br>
+                                <div class="col-xs-12" id="contentGral">
+                                    <h2>
+                                    Hola <br>
 
-                                    <h4>¿Nos acompañarás en nuestra boda?</h4>
-                                    <br>
+                                    <b>${ asistent }</b>
+                                    </h2> <br>
 
-                                    <button class="btn btn-primary" onClick="test(true, '${ asistent }')">Si</button>
-                                    <button class="btn btn-danger" onClick="test(false, '${ asistent }')">No</button>
+                                    <h4>¿Nos acompañarás en nuestra boda?</h4> <br>
+
+                                    <button class="btn" style="background-color: #F14E95; color: white;" onClick="searchAssistance('${ asistent }')">
+                                    ¡Por supuesto!
+                                    </button>
+
+                                    <button class="btn" style="background-color: #C579E0; color: white;" onClick="assistanceConfirmation(false, '${ asistent }', 0)">
+                                    No, lo siento
+                                    </button>
                                 </div>
                             `,
                             showCloseButton: false,
-                            showCancelButton: true,
+                            showCancelButton: false,
+                            showConfirmButton: false,
                             focusConfirm: false,
-                            confirmButtonText: '¡Por supuesto!',
-                            confirmButtonColor: '#F14E95',
-                            cancelButtonText: 'No, lo siento',
-                            cancelButtonColor: '#C579E0',
-                            customClass: {
-                                confirmButton: 'btn btn-lg btn-text-lg',
-                                cancelButton: 'btn btn-lg btn-text-lg'
-                            },
                             backdrop: `
                                 rgba(0,0,123,0.4)
                                 url("{{ asset('images/resources/collage.jpg') }}")
                                 center center
                             `
-                        }).then((result) => {
-                            
-                        })
+                        });
                     }
                 }
-            });
-
-            function test(res, guest) {
-                if (res == true) {
-                    $("#test").html(`excelente`);
-                } else {
-                    $("#test").html(`
-                        <div class="col-xs-12">
-                            <h1>Una lastima ${ guest }, pero esperamos poder verte pronto.</h2>
-
-                            <button class="btn btn-danger">Finalizar</button>
-                        </div>
-                    `);
-                }
-}
-
-            $("#cancelAsistent").click(function() {
-                $("#autocomplete-search").val("");
             });
         </script>
 	</body>

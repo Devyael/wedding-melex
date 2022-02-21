@@ -17,4 +17,6 @@ use App\Http\Controllers\MainController;
 Route::get('/', [MainController::class, 'index']);
 
 Route::get('/guests/search', [MainController::class, 'searchForGuests'])->name('searchForGuests');
-Route::get('/guests/amount/{identifier}', [MainController::class, 'numberOfGuests'])->name('numberOfGuests');
+Route::get('/guests/amount/{identifier}', [MainController::class, 'allInformationGuests'])->name('allInformationGuests');
+
+Route::post('/guests/save', [MainController::class, 'setInformation'])->name('setInformation');

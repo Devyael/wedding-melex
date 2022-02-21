@@ -13,9 +13,7 @@ class MainController extends Controller
      */
     public function index()
     {
-        $menu = Menu::all();
-
-        return view('welcome')->with('menu', $menu);
+        return view('welcome');
     }
 
     /**
@@ -23,7 +21,8 @@ class MainController extends Controller
      */
     public function searchForGuests(Request $request)
     {
-        $getInvitados = Invitados::where('titular_invitacion', 'LIKE', '%'. $request->search .'%')->get();
+        $validate = MenuInvitados::groupBy('invitado_id')->pluck('invitado_id');
+        $getInvitados = Invitados::where('titular_invitacion', 'LIKE', '%'. $request->search .'%')->whereNotIn('id', $validate)->get();
 
         return \response()->json($getInvitados);
     }
@@ -31,16 +30,42 @@ class MainController extends Controller
     /**
      * 
      */
-    public function numberOfGuests($guest)
+    public function allInformationGuests($guest)
     {
         $status = 200;
-        $getGuest = Invitados::where('titular_invitacion', 'LIKE', '%'. $guest .'%')->value('no_invitados');
+        $getGuest = Invitados::where('titular_invitacion', 'LIKE', '%'. $guest .'%')->get();
+
+        foreach($getGuest as $guest) {
+            $id = $guest->id;
+            $titular_invitacion = $guest->titular_invitacion;
+            $no_invitados = $guest->no_invitados;
+        }
 
         // return \response()->json($getInvitados);
 
         return response()->json([
             'status' => $status,
-            'no_invitados' => $getGuest
+            'id' => $id,
+            'titular_invitacion' => $titular_invitacion,
+            'no_invitados' => $no_invitados
         ]);
+    }
+
+    /**
+     * 
+     */
+    public function setInformation(Request $request)
+    {
+        for($i = 1; $i <= $request->count; $i++) {
+            $input = 'guest' . $request->guest . '-' . $i;
+            
+            $create = new MenuInvitados;
+            $create->invitado_id = $request->input('guest');
+            $create->menu_id = $request->input($input);
+            $create->save();
+
+        }
+
+        return redirect('/');
     }
 }

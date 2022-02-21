@@ -9,6 +9,8 @@ class MenuInvitados extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id',
         'invitado_id',

@@ -9,6 +9,8 @@ class Invitados extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id',
         'titular_invitacion',
