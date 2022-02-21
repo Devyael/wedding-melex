@@ -60,23 +60,32 @@ const assistanceConfirmation = (res, guest) => {
                guestMenu(guest, guestmask.val());
           });
      } else {
-          $("#contentGral").html(`
-               <div class="col-xs-12">
-                    <h2>
-                         <smal>Una lastima </small><br>
-                              <b>${ guest.titular_invitacion }</b> <br>
-                         <small>Esperamos poder verte pronto.</small>
-                    </h2>
+          $.ajax({
+               url: `/guests/cancel/${ guest }`,
+               type: "GET"
+          }).done(function (res) {
+               if( res.status === 400 ) {
+                   // Define what action will be in this exception.
+               }
 
-                    <button class="btn btn-danger" onClick="Swal.close();">Finalizar</button>
-               </div>
-          `);
+               console.log(res);
+     
+               $("#contentGral").html(`
+                    <div class="col-xs-12">
+                         <h2>
+                              <smal>Una lastima </small><br>
+                                   <b>${ guest }</b> <br>
+                              <small>Esperamos poder verte pronto.</small>
+                         </h2>
+
+                         <button class="btn btn-danger" onClick="location.reload();">Finalizar</button>
+                    </div>
+               `);
+          });
      }
 }
 
 const guestMenu = (guest, count) => {
-     console.log(count);
-
      $("#contentGral").html(`
           <h2>
                <b>Menús</b> <br>

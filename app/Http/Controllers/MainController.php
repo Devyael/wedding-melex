@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Exports\GuestsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\{Invitados, MenuInvitados, Menu};
 
@@ -67,5 +69,30 @@ class MainController extends Controller
         }
 
         return redirect('/');
+    }
+
+    /**
+     * 
+     */
+    public function cancelGuests($guest)
+    {
+        $status = 200;
+        $getGuest = Invitados::where('titular_invitacion', 'LIKE', '%'. $guest .'%')->value('id');
+
+        $create = new MenuInvitados;
+        $create->invitado_id = $getGuest;
+        $create->menu_id = 4;
+        $create->save();
+
+        return response()->json([
+            'status' => $status
+        ]);
+    }
+
+    /**
+     * 
+     */
+    public function export(){
+        return Excel::download(new GuestsExport, 'listado_invitados.xlsx');
     }
 }
